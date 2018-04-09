@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+	<meta charset = 'UTF-8'>
+	<title>Document</title>
+	<link rel = 'stylesheet' href = 'styles.css'>
+</head>
+<body>
+	<h2>Status: <span id = status></span></h2>
+	<script type = 'shader' id = 'vertex-shader'>
+		attribute vec2 vertex_Position;
+		uniform vec2 u_resolution;
+		uniform vec2 u_translation;
+		uniform vec2 u_playerScale;
+		uniform vec2 u_rotation;
+		uniform vec2 u_arrowTranslation;
+
+		void main () {
+			vec2 position = vertex_Position + u_translation + u_arrowTranslation;
+			vec2 zero_to_one = position / u_resolution;
+			vec2 zero_to_two = zero_to_one * 2.0;
+			vec2 clip_space  =  zero_to_two - 1.0;
+			vec2 revert_y		 = clip_space * vec2(1, -1);
+			vec2 scaled_vec = revert_y * u_playerScale;
+			vec2 rotated_vec = vec2(
+				scaled_vec.x * u_rotation.y + scaled_vec.y * u_rotation.x,
+				scaled_vec.y * u_rotation.y - scaled_vec.x * u_rotation.x
+			);
+
+			gl_Position = vec4(rotated_vec, 0.0, 1.0);
+		}
+	</script>
+	<script type = 'shader' id = 'fragment-shader'>
+		precision mediump float;
+
+		uniform vec3 obj_color;
+
+		void main()	{
+		  gl_FragColor = vec4(obj_color, 1.0);
+		}
+	</script>
+	
+	<!-- FOR PLAYER -->
+
+	<script type = 'shader' id = 'player-vertex-shader'>
+		attribute vec2 vertex_Position;
+		uniform vec2 u_resolution;
+		uniform vec2 u_translation;
+		uniform vec2 u_playerScale;
+		uniform vec2 u_rotation;
+
+		void main () {
+			vec2 zero_to_one = (vertex_Position + u_translation) / u_resolution;
+			vec2 zero_to_two = zero_to_one * 2.0;
+			vec2 clip_space  =  zero_to_two - 1.0;
+			vec2 revert_y		 = clip_space * vec2(1, -1);
+			vec2 scaled_vec = revert_y * u_playerScale;
+			vec2 rotated_vec = vec2(
+				scaled_vec.x * u_rotation.y + scaled_vec.y * u_rotation.x,
+				scaled_vec.y * u_rotation.y - scaled_vec.x * u_rotation.x
+			);
+
+			gl_Position = vec4(rotated_vec, 0.0, 1.0);
+		}
+	</script>
+	<script type = 'shader' id = 'player-fragment-shader'>
+		precision mediump float;
+
+		uniform vec3 obj_color;
+
+		void main()	{
+		  gl_FragColor = vec4(0.003, 0.46, 0.5, 1.0);
+		}
+	</script>
+
+	<!-- FOR STATIC -->
+
+	<script type = 'shader' id = 'static-vertex-shader'>
+		attribute vec2 a_vertexPosition;
+		uniform vec2 u_resolution;
+		uniform vec2 u_translation;
+
+		void main () {
+			vec2 zero_to_one = (a_vertexPosition + u_translation) / u_resolution;
+			vec2 zero_to_two = zero_to_one * 2.0;
+			vec2 clip_space  =  zero_to_two - 1.0;
+			vec2 revert_y		 = clip_space * vec2(1, -1);
+
+			gl_Position = vec4(revert_y, 0.0, 1.0);
+		}
+	</script>
+	<script type = 'shader' id = 'static-fragment-shader'>
+		precision mediump float;
+
+		uniform vec3 obj_color;
+
+		void main()	{
+		  gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+		}	
+	</script>
+
+	<!-- FOR UNITS -->
+
+	<script type = 'shader' id = 'units-vertex-shader'>
+		attribute vec2 a_vertexPosition;
+		uniform vec2 u_resolution;
+		uniform vec2 u_translation;
+
+		void main () {
+			vec2 zero_to_one = (a_vertexPosition + u_translation) / u_resolution;
+			vec2 zero_to_two = zero_to_one * 2.0;
+			vec2 clip_space  =  zero_to_two - 1.0;
+			vec2 revert_y		 = clip_space * vec2(1, -1);
+
+			gl_Position = vec4(revert_y, 0.0, 1.0);
+		}
+	</script>
+	<script type = 'shader' id = 'units-fragment-shader'>
+		precision mediump float;
+
+		uniform vec3 obj_color;
+
+		void main()	{
+		  gl_FragColor = vec4(0.75, 0.0, 0.0, 1.0);
+		}	
+	</script>
+
+	<!-- FOR UNITS -->
+
+	<script type = 'shader' id = 'arrows-vertex-shader'>
+		attribute vec2 a_vertexPosition;
+		uniform vec2 u_resolution;
+		uniform vec2 u_translation;
+		uniform vec2 u_arrowTranslation;
+
+		void main () {
+			vec2 zero_to_one = (a_vertexPosition + u_translation + u_arrowTranslation) / u_resolution;
+			vec2 zero_to_two = zero_to_one * 2.0;
+			vec2 clip_space  =  zero_to_two - 1.0;
+			vec2 revert_y		 = clip_space * vec2(1, -1);
+
+			gl_Position = vec4(revert_y, 0.0, 1.0);
+		}
+	</script>
+	<script type = 'shader' id = 'arrows-fragment-shader'>
+		precision mediump float;
+
+		uniform vec3 obj_color;
+
+		void main()	{
+		  gl_FragColor = vec4(0.75, 0.0, 0.0, 1.0);
+		}	
+	</script>	
+
+
+	<canvas id = 'canvas'></canvas>
+	<script src = 'build.js'></script>
+</body>
+</html>
